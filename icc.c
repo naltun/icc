@@ -12,8 +12,8 @@
 
 #define INCLUDES "#include <stdio.h>  \n" \
                  "#include <stdlib.h> \n" \
-				 "#include <string.h> \n" \
-				 "#include <unistd.h> \n"
+                 "#include <string.h> \n" \
+                 "#include <unistd.h> \n"
 
 #define CC (getenv("CC") ? getenv("CC") : "cc")
 
@@ -94,7 +94,7 @@ main()
         if (strncmp(usr_input, ".h", 2) == 0)
             printf("Todo...\n");
         else if (strncmp(usr_input, ".q", 2) == 0)
-			exit(EXIT_SUCCESS);
+            exit(EXIT_SUCCESS);
         else if (strncmp(usr_input, ".v", 2) == 0)
             printf("icc v%s\n", VERSION);
         /* END parse dot commands */
