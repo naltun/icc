@@ -108,11 +108,19 @@ main()
         /* START parse dot commands */
         if (strncmp(usr_input, ".h", 2) == 0) {
             printf("Todo...\n");
+            continue;
+        } else if (strncmp(usr_input, ".p", 2) == 0) {
+            printf("/* Code outside of main() */ \n\n"
+                   "%s                             \n"
+                   "/* Code inside of main()  */ \n\n"
+                   "%s                             \n", functions, main_code);
+            continue;
         } else if (strncmp(usr_input, ".q", 2) == 0) {
             cleanup_files();
             exit(EXIT_SUCCESS);
         } else if (strncmp(usr_input, ".v", 2) == 0) {
             printf("icc v%s\n", VERSION);
+            continue;
         }
         /* END parse dot commands */
 
