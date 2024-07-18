@@ -12,8 +12,8 @@
 #define BUF_SIZE 1024
 #define CODE_BUF_SIZE (BUF_SIZE * 10)
 
-#define TMP_SRC_FILE "/tmp/icc_tmp.c"
 #define TMP_BIN_FILE "/tmp/icc_tmp.out"
+#define TMP_SRC_FILE "/tmp/icc_tmp.c"
 
 #define INCLUDES "#include <stdio.h>  \n" \
                  "#include <stdlib.h> \n" \
@@ -23,6 +23,13 @@
 #define CC (getenv("CC") ? getenv("CC") : "cc")
 
 #define VERSION "0.1.0beta"
+
+void
+cleanup_files()
+{
+    (void)unlink(TMP_BIN_FILE);
+    (void)unlink(TMP_SRC_FILE);
+}
 
 int
 compile_code()
@@ -34,18 +41,20 @@ compile_code()
 }
 
 void
-handler(int sig)
-{
-    exit(EXIT_SUCCESS);
-}
-
-void
 exec_code()
 {
     if (system(TMP_BIN_FILE) == -1) {
         perror("system");
+        cleanup_files();
         exit(EXIT_FAILURE);
     }
+}
+
+void
+handler(int sig)
+{
+    cleanup_files();
+    exit(EXIT_SUCCESS);
 }
 
 void
@@ -54,6 +63,7 @@ write_code(const char *functions, const char *main_code)
     FILE *fd = fopen(TMP_SRC_FILE, "w");
     if (!fd) {
         perror("fopen");
+        cleanup_files();
         exit(EXIT_FAILURE);
     }
 
@@ -96,12 +106,14 @@ main()
             break;
 
         /* START parse dot commands */
-        if (strncmp(usr_input, ".h", 2) == 0)
+        if (strncmp(usr_input, ".h", 2) == 0) {
             printf("Todo...\n");
-        else if (strncmp(usr_input, ".q", 2) == 0)
+        } else if (strncmp(usr_input, ".q", 2) == 0) {
+            cleanup_files();
             exit(EXIT_SUCCESS);
-        else if (strncmp(usr_input, ".v", 2) == 0)
+        } else if (strncmp(usr_input, ".v", 2) == 0) {
             printf("icc v%s\n", VERSION);
+        }
         /* END parse dot commands */
 
         /* Append user input to program being constructed */
@@ -121,7 +133,7 @@ main()
                 strstr(codebuf, "{") != NULL) {
                 strncat(functions, codebuf, CODE_BUF_SIZE - strlen(functions) - 1);
                 codebuf[0] = '\0';
-            /* Check if we have code or a statement that is not a function */
+            /* Check if we have code that is not a function */
             } else if (strstr(codebuf, ";") != NULL || main_code_ready) {
                 strncat(main_code, codebuf, CODE_BUF_SIZE - strlen(main_code) - 1);
                 codebuf[0] = '\0';
@@ -140,8 +152,6 @@ main()
             printf("Compilation error\n");
     }
 
-    (void)unlink(TMP_SRC_FILE);
-    (void)unlink(TMP_BIN_FILE);
-
+    cleanup_files();
     return EXIT_SUCCESS;
 }
