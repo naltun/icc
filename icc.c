@@ -146,6 +146,13 @@ main()
                 strstr(codebuf, "{") != NULL) {
                 strncat(functions, codebuf, CODE_BUF_SIZE - strlen(functions) - 1);
                 codebuf[0] = '\0';
+            /* Check if we are working with structs */
+            } else if (strstr(codebuf, "struct") != NULL) {
+                if (strstr(codebuf, "{") != NULL)
+                    strncat(functions, codebuf, CODE_BUF_SIZE - strlen(functions) - 1);
+                else
+                    strncat(main_code, codebuf, CODE_BUF_SIZE - strlen(main_code) - 1);
+                codebuf[0] = '\0';
             /* Check if we have code that is not a function */
             } else if (strstr(codebuf, ";") != NULL || main_code_ready) {
                 strncat(main_code, codebuf, CODE_BUF_SIZE - strlen(main_code) - 1);
