@@ -15,6 +15,11 @@
 #define TMP_BIN_FILE "/tmp/icc_tmp.out"
 #define TMP_SRC_FILE "/tmp/icc_tmp.c"
 
+#define HELPMSG ".h - show this help message         \n" \
+                ".p - print the code you have entered\n" \
+                ".q - quit                           \n" \
+                ".v - print icc version                "
+
 #define INCLUDES "#include <stdio.h>  \n" \
                  "#include <stdlib.h> \n" \
                  "#include <string.h> \n" \
@@ -107,7 +112,7 @@ main()
 
         /* START parse dot commands */
         if (strncmp(usr_input, ".h", 2) == 0) {
-            printf("Todo...\n");
+            printf("%s\n", HELPMSG);
             continue;
         } else if (strncmp(usr_input, ".p", 2) == 0) {
             printf("/* Code outside of main() */ \n\n"
