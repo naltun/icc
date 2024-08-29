@@ -18,6 +18,7 @@
 #define HELPMSG ".h - show this help message         \n" \
                 ".p - print the code you have entered\n" \
                 ".q - quit                           \n" \
+                ".r - reset code                     \n" \
                 ".v - print icc version                "
 
 #define INCLUDES "#include <stdio.h>  \n" \
@@ -123,14 +124,21 @@ main()
         } else if (strncmp(usr_input, ".q", 2) == 0) {
             cleanup_files();
             exit(EXIT_SUCCESS);
+        } else if (strncmp(usr_input, ".r", 2) ==0) {
+            codebuf[0] = '\0';
+            functions[0] = '\0';
+            main_code[0] = '\0';
+            continue;
         } else if (strncmp(usr_input, ".v", 2) == 0) {
             printf("icc v%s\n", VERSION);
             continue;
         }
         /* END parse dot commands */
 
-        /* Append user input to program being constructed */
-        strncat(codebuf, usr_input, CODE_BUF_SIZE - strlen(codebuf) - 1);
+
+        /* Append user input to the program being constructed if not a newline character */
+        if (strncmp(usr_input, "\n", 1) != 0)
+            strncat(codebuf, usr_input, CODE_BUF_SIZE - strlen(codebuf) - 1);
 
         /* Check if we're inside a function definition */
         if (strstr(usr_input, "{") != NULL)
