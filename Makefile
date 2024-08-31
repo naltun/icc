@@ -18,4 +18,7 @@ clean:
 install:
 	mv $(TARGET) $(PREFIX)
 
+run:
+	./$(TARGET)
+
 .PHONY: all install clean

@@ -26,6 +26,13 @@
                  "#include <string.h> \n" \
                  "#include <unistd.h> \n"
 
+#define CODE_TEMPLATE "%s           \n" \
+                      "%s           \n" \
+                      "int main() { \n" \
+                      "    %s       \n" \
+                      "    return 0;\n" \
+                      "}            \n"
+
 #define CC (getenv("CC") ? getenv("CC") : "cc")
 
 #define VERSION "0.1.0beta"
@@ -73,15 +80,7 @@ write_code(const char *functions, const char *main_code)
         exit(EXIT_FAILURE);
     }
 
-    fprintf(fd, "%s           \n" /* header files                                 */
-                "             \n"
-                "%s           \n" /* user-defined functions                       */
-                "             \n"
-                "int main() { \n"
-                "    %s       \n" /* user-defined variables, function calls, etc. */
-                "             \n"
-                "    return 0;\n"
-                "}            \n", INCLUDES, functions, main_code);
+    fprintf(fd, CODE_TEMPLATE, INCLUDES, functions, main_code);
     fclose(fd);
 }
 
@@ -116,10 +115,7 @@ main()
             printf("%s\n", HELPMSG);
             continue;
         } else if (strncmp(usr_input, ".p", 2) == 0) {
-            printf("/* Code outside of main() */ \n\n"
-                   "%s                             \n"
-                   "/* Code inside of main()  */ \n\n"
-                   "%s                             \n", functions, main_code);
+            printf(CODE_TEMPLATE, INCLUDES, functions, main_code);
             continue;
         } else if (strncmp(usr_input, ".q", 2) == 0) {
             cleanup_files();
