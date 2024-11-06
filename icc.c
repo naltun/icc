@@ -24,7 +24,7 @@
 #define INCLUDES "#include <stdio.h>  \n" \
                  "#include <stdlib.h> \n" \
                  "#include <string.h> \n" \
-                 "#include <unistd.h> \n"
+                 "#include <unistd.h>   "
 
 #define CODE_TEMPLATE "%s           \n" \
                       "%s           \n" \
@@ -48,7 +48,7 @@ int
 compile_code()
 {
     char cmd[BUF_SIZE];
-    snprintf(cmd, sizeof(cmd), "%s -o %s %s", CC, TMP_BIN_FILE, TMP_SRC_FILE);
+    (void)snprintf(cmd, sizeof(cmd), "%s -o %s %s", CC, TMP_BIN_FILE, TMP_SRC_FILE);
 
     return system(cmd);
 }
@@ -71,6 +71,12 @@ handler(int sig)
 }
 
 void
+print_code(const char *functions, const char *main_code)
+{
+    (void)printf(CODE_TEMPLATE, INCLUDES, functions, main_code);
+}
+
+void
 write_code(const char *functions, const char *main_code)
 {
     FILE *fd = fopen(TMP_SRC_FILE, "w");
@@ -80,8 +86,8 @@ write_code(const char *functions, const char *main_code)
         exit(EXIT_FAILURE);
     }
 
-    fprintf(fd, CODE_TEMPLATE, INCLUDES, functions, main_code);
-    fclose(fd);
+    (void)fprintf(fd, CODE_TEMPLATE, INCLUDES, functions, main_code);
+    (void)fclose(fd);
 }
 
 int
@@ -97,25 +103,27 @@ main()
 
     signal(SIGINT, handler);
 
-    printf(" _                | Interactive C Compiler v%s \n"
-           "(_)               |                            \n"
-           " _    ___    ___  | Type '.h' for help         \n"
-           "| |  / __|  / __| |   and '.q' to quit         \n"
-           "| | | (__  | (__  |                            \n"
-           "|_|  \\___|  \\___| | Write your C code below\n\n", VERSION);
+    (void)printf(" _                | Interactive C Compiler v%s \n"
+                 "(_)               |                            \n"
+                 " _    ___    ___  | Type '.h' for help         \n"
+                 "| |  / __|  / __| |   and '.q' to quit         \n"
+                 "| | | (__  | (__  |                            \n"
+                 "|_|  \\___|  \\___| | Write your C code below\n\n", VERSION);
 
     while (1) {
-        printf(">>> ");
+        (void)printf(">>> ");
 
         if (!fgets(usr_input, sizeof(usr_input), stdin))
             break;
 
-        /* START parse dot commands */
+        /*
+         * START parse dot commands
+         */
         if (strncmp(usr_input, ".h", 2) == 0) {
-            printf("%s\n", HELPMSG);
+            (void)printf("%s\n", HELPMSG);
             continue;
         } else if (strncmp(usr_input, ".p", 2) == 0) {
-            printf(CODE_TEMPLATE, INCLUDES, functions, main_code);
+            print_code(functions, main_code);
             continue;
         } else if (strncmp(usr_input, ".q", 2) == 0) {
             cleanup_files();
@@ -126,10 +134,12 @@ main()
             main_code[0] = '\0';
             continue;
         } else if (strncmp(usr_input, ".v", 2) == 0) {
-            printf("icc v%s\n", VERSION);
+            (void) printf("icc v%s\n", VERSION);
             continue;
         }
-        /* END parse dot commands */
+        /*
+         * END parse dot commands
+         */
 
 
         /* Append user input to the program being constructed if not a newline character */
@@ -173,7 +183,7 @@ main()
         if (compile_code() == 0)
             exec_code();
         else
-            printf("Compilation error\n");
+            (void)printf("Compilation error\n");
     }
 
     cleanup_files();
